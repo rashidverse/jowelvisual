@@ -2,10 +2,6 @@
 
 import { useRef, useState, type FormEvent } from "react";
 
-type Result =
-  | { success: true; data: { message?: string } }
-  | { success: false; data: { message: string; errors?: Record<string, string> } };
-
 const FIELDS = [
   { id: "name", type: "text", label: "Name", required: true },
   { id: "email", type: "email", label: "Email", required: true },
@@ -38,14 +34,17 @@ export default function ContactForm() {
     data.append("referrer", location.toString());
 
     try {
-      const res = await fetch("/api/contact/", { method: "POST", body: data });
-      const json = (await res.json()) as Result;
-      if (json.success) {
+      const res = await fetch("https://formsubmit.co/ajax/jowelvisual@gmail.com", {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: data,
+      });
+      const json = (await res.json()) as { success?: string | boolean };
+      if (res.ok && (json.success === "true" || json.success === true)) {
         form.reset();
-        if (json.data.message) setMessage({ ok: true, text: json.data.message });
+        setMessage({ ok: true, text: "Your submission was successful." });
       } else {
-        if (json.data.errors) setFieldErrors(json.data.errors);
-        setMessage({ ok: false, text: json.data.message });
+        setMessage({ ok: false, text: "Your submission failed because of a server error." });
       }
     } catch {
       setMessage({ ok: false, text: "error" });
