@@ -1,0 +1,293 @@
+#ats_quote_wrapper {
+  height: 200px;
+}
+
+.ats-wrap {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.ats-heading {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.ats-subtitle {
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  opacity: .85;
+}
+
+.ats-title {
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.ats-grid {
+  display: flex;
+  gap: 45px;
+  align-items: flex-start;
+}
+
+.ats-left {
+  flex: 1;
+  min-width: 0;
+  padding-top: 8px;
+}
+
+.ats-right {
+  flex: 0 0 44%;
+  min-width: 0;
+}
+
+.ats-wrap.image-left .ats-grid {
+  flex-direction: row-reverse;
+}
+
+.ats-stars {
+  display: flex;
+  gap: 6px;
+  margin: 0;
+}
+
+.ats-star svg,
+.ats-star i {
+  width: 18px;
+  height: 18px;
+}
+
+.ats-quote {
+  font-size: 18px;
+  line-height: 1.75;
+  opacity: .85;
+  margin-bottom: 18px;
+}
+
+.ats-name {
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.ats-main-image {
+  width: 100%;
+  height: 420px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #f3f3f3;
+}
+
+.ats-main-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ats-arrows {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 20px;
+  justify-content: flex-start;
+}
+
+.ats-arrow {
+	border: 0;
+	cursor: pointer;
+	width: auto !important;
+	height: 32px;
+	background: transparent;
+	line-height: 0 !important;
+	letter-spacing: 0px !important;
+	border-color: #fff !important;
+}
+.ats-arrow:hover {
+	background: #fff !important;
+}
+.ats-arrow:focus {
+	background: transparent !important;
+}
+.ats-arrow:hover svg {
+	color: #000 !important;
+	fill: #000 !important;
+}
+.ats-arrow svg,
+.ats-arrow i {
+  width: 18px;
+  height: 18px;
+}
+
+.ats-thumbs {
+  margin-top: 15px;
+}
+
+.ats-thumb-slide {
+  cursor: pointer;
+  user-select: none;
+  padding: 10px 0;
+  color: inherit;
+}
+
+.ats-thumb-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.ats-thumb-image {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 2px solid transparent;
+}
+
+.ats-thumb-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ats-thumb-name {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.ats-thumb-underline {
+  height: 2px;
+  background: transparent;
+  margin-top: 14px;
+}
+
+.ats-thumb-slide.is-active .ats-thumb-underline {
+  background: currentColor;
+  opacity: .85;
+}
+
+.ats-thumb-slide.is-active .ats-thumb-image {
+  border-color: currentColor;
+}
+
+@media (max-width: 1024px) {
+  .ats-title {
+    font-size: 38px;
+  }
+
+  .ats-grid {
+    gap: 28px;
+  }
+
+  .ats-right {
+    flex-basis: 46%;
+  }
+}
+
+@media (max-width: 767px) {
+  .ats-title {
+    font-size: 30px;
+  }
+
+  .ats-grid {
+    flex-direction: column;
+  }
+
+  .ats-right {
+    flex-basis: auto;
+    width: 100%;
+  }
+
+  .ats-main-image {
+    height: 320px;
+  }
+
+  .ats-arrows {
+    justify-content: center;
+  }
+}
+
+
+/* Anti-flicker (mobile GPU/compositing) */
+.ats-wrap,
+.ats-wrap * {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ats-text .swiper-wrapper,
+.ats-image .swiper-wrapper,
+.ats-thumbs .swiper-wrapper {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+.ats-text .swiper-slide,
+.ats-image .swiper-slide,
+.ats-thumbs .swiper-slide {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.ats-main-image {
+  contain: layout paint;
+}
+
+
+/* v2.2.0: Mobile hard-fix (no overflow) */
+
+.ats-wrap,
+.ats21-wrap {
+  overflow-x: hidden;
+}
+
+.ats-grid {
+  min-width: 0;
+}
+
+.ats-left,
+.ats-right {
+  min-width: 0;
+}
+
+.ats-quote {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.ats-thumb-text {
+  min-width: 0;
+}
+
+.ats-thumb-name,
+.ats-thumb-meta {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+@media (max-width: 767px) {
+  .ats-grid {
+    flex-direction: column;
+  }
+
+  .ats-right {
+    width: 100%;
+    flex-basis: auto;
+  }
+
+  .ats-left {
+    width: 100%;
+  }
+
+  .ats-main-image {
+    height: 280px;
+  }
+}
+
+.ats-thumbs {
+  overflow: hidden;
+}

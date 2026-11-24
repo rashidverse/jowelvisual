@@ -1,0 +1,45 @@
+
+body {
+    background: #1c1c1c;
+}
+
+
+div[aria-label="Footer Links"] {
+    display: none !important;
+}
+
+
+@media (max-width: 1366px) {
+    .elementor-264 .elementor-element.elementor-element-f71c3 {
+        --justify-content: center !important;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .elementor-counter-title {
+        justify-content: center !important;
+        text-align: center !important;
+    }
+
+    .elementor-264 .elementor-element.elementor-element-f71c3 {
+        --justify-content: center !important;
+    }
+
+    #ht-ctc-chat {
+        bottom: 65px !important;
+    }
+	
+
+	
+	 .elementor-14 .elementor-element.elementor-element-a18d2de {
+    --display: block !important;
+    display: block !important;
+  }
+	.elementor-33 .elementor-element.elementor-element-b608924 {
+    --display: block !important;
+    display: block !important;
+  }
+
+
+
+}
