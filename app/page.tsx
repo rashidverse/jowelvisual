@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import HeroSlides from "@/components/HeroSlides";
 import Counter from "@/components/Counter";
 import MotionFxBackground from "@/components/MotionFxBackground";
@@ -57,14 +58,14 @@ export default function Home() {
                 </p>
               </div>
               <div className="elementor-element elementor-element-f282359 elementor-mobile-align-center elementor-widget elementor-widget-button">
-                <a className="elementor-button elementor-button-link elementor-size-sm" href="/about/">
+                <Link className="elementor-button elementor-button-link elementor-size-sm" href="/about/">
                   <span className="elementor-button-content-wrapper">
                     <span className="elementor-button-icon">
                       <ArrowRight />
                     </span>
                     <span className="elementor-button-text">Continue Reading</span>
                   </span>
-                </a>
+                </Link>
               </div>
             </div>
           </div>
