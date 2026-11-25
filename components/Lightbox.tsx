@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import Swiper, { Keyboard, Zoom, type SwiperClass } from "@/lib/swiper";
+import { ChevronLeft, ChevronRight } from "./icons";
 
 /*
  * Port of Elementor's image lightbox (elementor/assets/js/chunks/lightbox-lightbox.js)
- * for a single image: same markup and classes (styled by lightbox-*.css), share menu,
+ * for single images and galleries: same markup and classes (styled by lightbox-*.css), share menu,
  * zoom (Swiper zoom), fullscreen, UI auto-hide after 3.5s, Esc / click outside to close.
  */
 
@@ -39,11 +40,14 @@ const Icon = ({ d, className, ...rest }: { d: string; className: string } & Reac
 
 const BODY_CLASSES = ["dialog-body", "dialog-lightbox-body", "dialog-container", "dialog-lightbox-container"];
 
-type Props = {
+export type LightboxImage = {
   src: string;
   title: string;
   /** Elementor's data-e-action-hash (used for the share links) */
   actionHash: string;
+};
+
+type Props = LightboxImage & {
   children: ReactNode;
 };
 
@@ -65,12 +69,20 @@ export default function LightboxLink({ src, title, actionHash, children }: Props
       >
         {children}
       </a>
-      {open && createPortal(<LightboxDialog src={src} title={title} actionHash={actionHash} onClose={() => setOpen(false)} />, document.body)}
+      {open && <LightboxDialog images={[{ src, title, actionHash }]} onClose={() => setOpen(false)} />}
     </>
   );
 }
 
-function LightboxDialog({ src, title, actionHash, onClose }: Omit<Props, "children"> & { onClose: () => void }) {
+export function LightboxDialog({
+  images,
+  initialIndex = 0,
+  onClose,
+}: {
+  images: readonly LightboxImage[];
+  initialIndex?: number;
+  onClose: () => void;
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperClass | null>(null);
@@ -79,6 +91,9 @@ function LightboxDialog({ src, title, actionHash, onClose }: Omit<Props, "childr
   const [zoomMode, setZoomMode] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [uiHidden, setUiHidden] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const { src, title, actionHash } = images[activeIndex];
+  const isGallery = images.length > 1;
   const shareModeRef = useRef(false);
   shareModeRef.current = shareMode;
 
@@ -96,6 +111,7 @@ function LightboxDialog({ src, title, actionHash, onClose }: Omit<Props, "childr
   }, [onClose]);
 
   useEffect(() => {
+    const opener = document.activeElement;
     document.body.classList.add(...BODY_CLASSES);
     const swiper = new Swiper(containerRef.current!, {
       modules: [Zoom, Keyboard],
@@ -104,6 +120,14 @@ function LightboxDialog({ src, title, actionHash, onClose }: Omit<Props, "childr
       grabCursor: true,
       runCallbacksOnInit: false,
       keyboard: true,
+      initialSlide: initialIndex,
+      loop: isGallery,
+      on: {
+        slideChange: (instance) => {
+          setActiveIndex(instance.realIndex);
+          showUi();
+        },
+      },
     });
     swiperRef.current = swiper;
     widgetRef.current?.focus();
@@ -122,8 +146,9 @@ function LightboxDialog({ src, title, actionHash, onClose }: Omit<Props, "childr
       window.clearTimeout(hideTimer.current);
       swiper.destroy(true, true);
       document.body.classList.remove(...BODY_CLASSES);
+      if (opener instanceof HTMLElement) opener.focus({ preventScroll: true });
     };
-  }, [close, showUi]);
+  }, [close, initialIndex, isGallery, showUi]);
 
   const toggleZoom = () => {
     const swiper = swiperRef.current;
@@ -182,15 +207,15 @@ function LightboxDialog({ src, title, actionHash, onClose }: Omit<Props, "childr
     .filter(Boolean)
     .join(" ");
 
-  return (
-    // eslint-disable-next-line jsx-a11y/role-supports-aria-props -- same attributes Elementor prints
+  return createPortal(
     <div
       ref={widgetRef}
       className="dialog-widget dialog-lightbox-widget dialog-type-buttons dialog-type-lightbox elementor-lightbox"
       aria-modal="true"
-      role="document"
+      role="dialog"
+      aria-label={isGallery ? "Project image gallery" : title}
       tabIndex={0}
-      id="elementor-lightbox-slideshow-single-img"
+      id={isGallery ? "elementor-lightbox-slideshow-project" : "elementor-lightbox-slideshow-single-img"}
       style={{ display: "block" }}
       onClick={onWidgetClick}
     >
@@ -273,16 +298,28 @@ function LightboxDialog({ src, title, actionHash, onClose }: Omit<Props, "childr
                 aria-label="Fullscreen"
                 onClick={toggleFullscreen}
               />
-              <span className="elementor-slideshow__counter" />
+              <span className="elementor-slideshow__counter">{isGallery && `${activeIndex + 1} / ${images.length}`}</span>
             </header>
             <div className="swiper-wrapper">
-              <div className="swiper-slide elementor-lightbox-item" data-e-action-hash={actionHash} role="group" aria-label="1 / 1">
-                <div className="swiper-zoom-container">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img className="elementor-lightbox-image elementor-lightbox-prevent-close" data-title={title} alt={title} src={src} />
+              {images.map((item, index) => (
+                <div key={item.src} className="swiper-slide elementor-lightbox-item" data-e-action-hash={item.actionHash} role="group" aria-label={`${index + 1} / ${images.length}`}>
+                  <div className="swiper-zoom-container">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className="elementor-lightbox-image elementor-lightbox-prevent-close" data-title={item.title} alt={item.title} src={item.src} />
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
+            {isGallery && (
+              <>
+                <button type="button" className="elementor-swiper-button elementor-swiper-button-prev elementor-lightbox-prevent-close" aria-label="Previous image" onClick={() => swiperRef.current?.slidePrev()}>
+                  <ChevronLeft />
+                </button>
+                <button type="button" className="elementor-swiper-button elementor-swiper-button-next elementor-lightbox-prevent-close" aria-label="Next image" onClick={() => swiperRef.current?.slideNext()}>
+                  <ChevronRight />
+                </button>
+              </>
+            )}
             <footer className="elementor-slideshow__footer elementor-lightbox-prevent-close">
               <div className="elementor-slideshow__title">{title}</div>
               <div className="elementor-slideshow__description" />
@@ -291,6 +328,7 @@ function LightboxDialog({ src, title, actionHash, onClose }: Omit<Props, "childr
         </div>
         <div className="dialog-buttons-wrapper dialog-lightbox-buttons-wrapper" />
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
